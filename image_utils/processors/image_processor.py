@@ -16,48 +16,42 @@ class ImageProcessor:
         format (Optional[str]): The format of the input image.
     """
 
-    def __init__(self, prog: str, description: str):
+    def __init__(self, prog: str, description: str, parser: argparse.ArgumentParser):
         """
         Initialize the ImageProcessor with program name and description.
 
         Args:
             prog (str): The program name.
             description (str): The description of the program.
+            parser (argparse.ArgumentParser): The argument parser.
         """
         self.prog = prog
         self.description = description
+        self.parser = parser
         self.input_image: Optional[Image.Image] = None
         self.format: Optional[str] = None
 
-    def create_parser(self) -> argparse.ArgumentParser:
+    def init_parser(self):
         """
-        Create the argument parser with common arguments.
-
-        Returns:
-            argparse.ArgumentParser: The argument parser.
+        Initialize the argument parser with common arguments.
         """
-        parser = argparse.ArgumentParser(prog=self.prog, description=self.description)
-        parser.add_argument('-i', '--input', type=str, help='Input image path')
-        self.add_arguments(parser)
-        return parser
+        self.parser.add_argument('-i', '--input', type=str, help='Input image path')
+        self.add_arguments()
 
-    def add_arguments(self, parser: argparse.ArgumentParser):
+    def add_arguments(self):
         """
         Add specific arguments for the image processing task.
-
-        Args:
-            parser (argparse.ArgumentParser): The argument parser.
         """
         pass
 
-    def parse_arguments(self, parser: argparse.ArgumentParser):
+    def parse_arguments(self):
         """
         Parse the arguments from the command line.
 
         Args:
             parser (argparse.ArgumentParser): The argument parser.
         """
-        self.args = parser.parse_args()
+        self.args = self.parser.parse_args()
 
     def load_image(self):
         """
@@ -103,8 +97,8 @@ class ImageProcessor:
         """
         Run the image processing task.
         """
-        parser = self.create_parser()
-        self.parse_arguments(parser)
+        self.init_parser()
+        self.parse_arguments()
         self.load_image()
         output_image = self.process()
         self.save_image(output_image)

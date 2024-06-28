@@ -10,20 +10,24 @@ class ResizeImageProcessor(ImageProcessor):
     Inherits from ImageProcessor.
     """
 
-    def __init__(self):
+    def __init__(self, parser: argparse.ArgumentParser):
         """
         Initialize the ResizeImageProcessor with specific program name and description.
-        """
-        super().__init__(prog='resize', description='Resize an image.')
 
-    def add_arguments(self, parser: argparse.ArgumentParser):
+        Args:
+            parser (argparse.ArgumentParser): The argument parser.
+        """
+        super().__init__(prog='resize', description='Resize an image', parser=parser)
+
+    def add_arguments(self):
         """
         Add specific arguments for resizing the image.
 
         Args:
             parser (argparse.ArgumentParser): The argument parser.
         """
-        parser.add_argument('size', type=str, help='Size in the format <width>x<height>, <width>x, or x<height>')
+        super().add_arguments()
+        self.parser.add_argument('size', type=str, help='Size in the format <width>x<height>, <width>x, or x<height>')
 
     def parse_size(self, size_str: str) -> Tuple[Optional[int], Optional[int]]:
         """

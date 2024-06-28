@@ -9,20 +9,23 @@ class CropImageProcessor(ImageProcessor):
     Inherits from ImageProcessor.
     """
 
-    def __init__(self):
+    def __init__(self, parser: argparse.ArgumentParser):
         """
         Initialize the CropImageProcessor with specific program name and description.
-        """
-        super().__init__(prog='crop', description='Automatically crop an image to its bounding box and convert it to a square.')
 
-    def add_arguments(self, parser: argparse.ArgumentParser):
+        Args:
+            parser (argparse.ArgumentParser): The argument parser.
+        """
+        super().__init__(prog='crop', description='Crop an image', parser=parser)
+
+    def add_arguments(self):
         """
         Add specific arguments for cropping the image.
 
         Args:
             parser (argparse.ArgumentParser): The argument parser.
         """
-        parser.add_argument('--align', '-a', type=str, choices=['top', 'bottom', 'left', 'right', 'center'], default='center', help='Align the cropped image in the square (default: center)')
+        self.parser.add_argument('--align', type=str, choices=['top', 'bottom', 'left', 'right', 'center'], default='center', help='Align the cropped image in the square (default: center)')
 
     def process(self) -> Image.Image:
         """
@@ -36,13 +39,9 @@ class CropImageProcessor(ImageProcessor):
             cropped_image = self.input_image.crop(bbox)
             cropped_width, cropped_height = cropped_image.size
 
-            # Determine the size of the square
             max_side = max(cropped_width, cropped_height)
-            
-            # Create a new square image with a transparent background
             square_image = Image.new("RGBA", (max_side, max_side), (0, 0, 0, 0))
-            
-            # Calculate position to paste the cropped image based on alignment
+
             if self.args.align == 'top':
                 paste_x = (max_side - cropped_width) // 2
                 paste_y = 0
@@ -61,7 +60,6 @@ class CropImageProcessor(ImageProcessor):
             
             square_image.paste(cropped_image, (paste_x, paste_y))
         else:
-            # If the image is completely transparent, create a 1x1 transparent square
             square_image = Image.new("RGBA", (1, 1), (0, 0, 0, 0))
         
         return square_image
