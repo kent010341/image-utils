@@ -2,7 +2,6 @@ from PIL import Image
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from typing import Optional
-import argparse
 import sys
 
 class ImageProcessor:
@@ -10,48 +9,21 @@ class ImageProcessor:
     A base class for image processing tasks.
 
     Attributes:
-        prog (str): The program name.
-        description (str): The description of the program.
+        input_path (Optional[str]): The input image path.
         input_image (Optional[Image.Image]): The input image.
         format (Optional[str]): The format of the input image.
     """
 
-    def __init__(self, prog: str, description: str, parser: argparse.ArgumentParser):
+    def __init__(self, input_path: Optional[str] = None):
         """
-        Initialize the ImageProcessor with program name and description.
+        Initialize the ImageProcessor.
 
         Args:
-            prog (str): The program name.
-            description (str): The description of the program.
-            parser (argparse.ArgumentParser): The argument parser.
+            input_path (Optional[str]): The input image path.
         """
-        self.prog = prog
-        self.description = description
-        self.parser = parser
+        self.input_path = input_path
         self.input_image: Optional[Image.Image] = None
         self.format: Optional[str] = None
-
-    def init_parser(self):
-        """
-        Initialize the argument parser with common arguments.
-        """
-        self.parser.add_argument('-i', '--input', type=str, help='Input image path')
-        self.add_arguments()
-
-    def add_arguments(self):
-        """
-        Add specific arguments for the image processing task.
-        """
-        pass
-
-    def parse_arguments(self):
-        """
-        Parse the arguments from the command line.
-
-        Args:
-            parser (argparse.ArgumentParser): The argument parser.
-        """
-        self.args = self.parser.parse_args()
 
     def load_image(self):
         """
@@ -60,8 +32,8 @@ class ImageProcessor:
         if not sys.stdin.isatty():
             self.input_image = Image.open(sys.stdin.buffer)
             self.format = self.input_image.format
-        elif self.args.input:
-            self.input_image = Image.open(self.args.input)
+        elif self.input_path:
+            self.input_image = Image.open(self.input_path)
             self.format = self.input_image.format
         else:
             Tk().withdraw()  # Hide the root window
@@ -97,8 +69,6 @@ class ImageProcessor:
         """
         Run the image processing task.
         """
-        self.init_parser()
-        self.parse_arguments()
         self.load_image()
         output_image = self.process()
         self.save_image(output_image)

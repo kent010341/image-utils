@@ -1,6 +1,6 @@
 from .image_processor import ImageProcessor
 from PIL import Image
-import argparse
+from typing import Optional
 
 class CropImageProcessor(ImageProcessor):
     """
@@ -9,23 +9,16 @@ class CropImageProcessor(ImageProcessor):
     Inherits from ImageProcessor.
     """
 
-    def __init__(self, parser: argparse.ArgumentParser):
+    def __init__(self, input_path: Optional[str] = None, align: str = 'center'):
         """
-        Initialize the CropImageProcessor with specific program name and description.
+        Initialize the CropImageProcessor with input path and alignment.
 
         Args:
-            parser (argparse.ArgumentParser): The argument parser.
+            input_path (Optional[str]): The input image path.
+            align (str): The alignment for cropping.
         """
-        super().__init__(prog='crop', description='Crop an image', parser=parser)
-
-    def add_arguments(self):
-        """
-        Add specific arguments for cropping the image.
-
-        Args:
-            parser (argparse.ArgumentParser): The argument parser.
-        """
-        self.parser.add_argument('--align', type=str, choices=['top', 'bottom', 'left', 'right', 'center'], default='center', help='Align the cropped image in the square (default: center)')
+        super().__init__(input_path)
+        self.align = align
 
     def process(self) -> Image.Image:
         """
@@ -42,16 +35,16 @@ class CropImageProcessor(ImageProcessor):
             max_side = max(cropped_width, cropped_height)
             square_image = Image.new("RGBA", (max_side, max_side), (0, 0, 0, 0))
 
-            if self.args.align == 'top':
+            if self.align == 'top':
                 paste_x = (max_side - cropped_width) // 2
                 paste_y = 0
-            elif self.args.align == 'bottom':
+            elif self.align == 'bottom':
                 paste_x = (max_side - cropped_width) // 2
                 paste_y = max_side - cropped_height
-            elif self.args.align == 'left':
+            elif self.align == 'left':
                 paste_x = 0
                 paste_y = (max_side - cropped_height) // 2
-            elif self.args.align == 'right':
+            elif self.align == 'right':
                 paste_x = max_side - cropped_width
                 paste_y = (max_side - cropped_height) // 2
             else:  # center

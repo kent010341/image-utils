@@ -1,7 +1,6 @@
 from .image_processor import ImageProcessor
+from typing import Optional, Tuple
 from PIL import Image
-from typing import Tuple, Optional
-import argparse
 
 class ResizeImageProcessor(ImageProcessor):
     """
@@ -10,24 +9,16 @@ class ResizeImageProcessor(ImageProcessor):
     Inherits from ImageProcessor.
     """
 
-    def __init__(self, parser: argparse.ArgumentParser):
+    def __init__(self, size: str, input_path: Optional[str] = None):
         """
-        Initialize the ResizeImageProcessor with specific program name and description.
+        Initialize the ResizeImageProcessor with size and input path.
 
         Args:
-            parser (argparse.ArgumentParser): The argument parser.
+            size (str): The size to resize the image to.
+            input_path (Optional[str]): The input image path.
         """
-        super().__init__(prog='resize', description='Resize an image', parser=parser)
-
-    def add_arguments(self):
-        """
-        Add specific arguments for resizing the image.
-
-        Args:
-            parser (argparse.ArgumentParser): The argument parser.
-        """
-        super().add_arguments()
-        self.parser.add_argument('size', type=str, help='Size in the format <width>x<height>, <width>x, or x<height>')
+        super().__init__(input_path)
+        self.size = size
 
     def parse_size(self, size_str: str) -> Tuple[Optional[int], Optional[int]]:
         """
@@ -56,7 +47,7 @@ class ResizeImageProcessor(ImageProcessor):
         Returns:
             Image.Image: The resized image.
         """
-        width, height = self.parse_size(self.args.size)
+        width, height = self.parse_size(self.size)
         img_width, img_height = self.input_image.size
         if width and not height:
             height = int((width / img_width) * img_height)

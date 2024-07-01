@@ -1,27 +1,28 @@
-import argparse
+import click
 from .processors.resize_image_processor import ResizeImageProcessor
 from .processors.crop_image_processor import CropImageProcessor
+from .decorators import common_options
 
-def main():
-    parser = argparse.ArgumentParser(prog='image-utils', description='A command-line tool for image processing.')
-    subparsers = parser.add_subparsers(dest='command')
+@click.group()
+def cli():
+    """A command-line tool for image processing."""
+    pass
 
-    # Resize subcommand
-    resize_parser = subparsers.add_parser('resize', help='Resize an image')
-    resize_processor = ResizeImageProcessor(resize_parser)
+@cli.command()
+@click.argument('size')
+@common_options
+def resize(size, input):
+    """Resize an image"""
+    processor = ResizeImageProcessor(size=size, input_path=input)
+    processor.run()
 
-    # Crop subcommand
-    crop_parser = subparsers.add_parser('crop', help='Crop an image')
-    crop_processor = CropImageProcessor(crop_parser)
-
-    args = parser.parse_args()
-
-    if args.command == 'resize':
-        resize_processor.run()
-    elif args.command == 'crop':
-        crop_processor.run()
-    else:
-        parser.print_help()
+@cli.command()
+@click.option('--align', '-a', type=click.Choice(['top', 'bottom', 'left', 'right', 'center']), default='center', help='Align the cropped image in the square (default: center)')
+@common_options
+def crop(input, align):
+    """Crop an image"""
+    processor = CropImageProcessor(input_path=input, align=align)
+    processor.run()
 
 if __name__ == "__main__":
-    main()
+    cli()

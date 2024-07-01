@@ -12,10 +12,11 @@ setup(
     packages=find_packages(),
     install_requires=[
         'Pillow',
+        'click',
     ],
     entry_points={
         'console_scripts': [
-            'image-utils=image_utils.cli:main',
+            'image-utils=image_utils.cli:cli',
         ],
     },
     classifiers=[
