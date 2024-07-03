@@ -1,7 +1,6 @@
 import click
-from .processors.resize_image_processor import ResizeImageProcessor
-from .processors.crop_image_processor import CropImageProcessor
-from .decorators import common_options
+from image_utils.decorators import common_options, handle_image_io
+from image_utils.operators import crop, resize_with_pattern
 
 @click.group()
 def cli():
@@ -11,18 +10,18 @@ def cli():
 @cli.command()
 @click.argument('size')
 @common_options
-def resize(size, input):
+@handle_image_io(resize_with_pattern, 'size')
+def resize_image(size, input):
     """Resize an image"""
-    processor = ResizeImageProcessor(size=size, input_path=input)
-    processor.run()
+    pass
 
 @cli.command()
-@click.option('--align', '-a', type=click.Choice(['top', 'bottom', 'left', 'right', 'center']), default='center', help='Align the cropped image in the square (default: center)')
+@click.option('--align', type=click.Choice(['top', 'bottom', 'left', 'right', 'center']), default='center', help='Align the cropped image in the square (default: center)')
 @common_options
-def crop(input, align):
+@handle_image_io(crop, 'align')
+def crop_image(input, align):
     """Crop an image"""
-    processor = CropImageProcessor(input_path=input, align=align)
-    processor.run()
+    pass
 
 if __name__ == "__main__":
     cli()

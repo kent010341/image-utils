@@ -1,3 +1,4 @@
-from .processors import ImageProcessor, ResizeImageProcessor, CropImageProcessor
+from .pipeline import pipe, Pipeline
+from .operators import crop, resize
 
-__all__ = ['ImageProcessor', 'ResizeImageProcessor', 'CropImageProcessor']
+__all__ = ['pipe', 'Pipeline', 'crop', 'resize']
