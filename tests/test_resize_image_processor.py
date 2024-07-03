@@ -1,8 +1,8 @@
 from PIL import Image
 from io import BytesIO
-from image_utils.processors.resize_image_processor import ResizeImageProcessor
+from image_utils.operators import resize
 
-def test_resize_image_processor():
+def test_resize_operator():
     # Create an in-memory image
     original_image = Image.new("RGB", (200, 100), "blue")
     img_byte_arr = BytesIO()
@@ -10,14 +10,12 @@ def test_resize_image_processor():
     img_byte_arr = BytesIO(img_byte_arr.getvalue())
 
     # Test resizing
-    processor = ResizeImageProcessor(size='100x50')
-    processor.input_image = Image.open(img_byte_arr)
-    processor.format = 'PNG'
-    resized_image = processor.process()
+    operator = resize(100, 50)
+    resized_image = operator(Image.open(img_byte_arr))
 
     assert resized_image.size == (100, 50)
 
-def test_resize_image_processor_width_only():
+def test_resize_operator_width_only():
     # Create an in-memory image
     original_image = Image.new("RGB", (200, 100), "blue")
     img_byte_arr = BytesIO()
@@ -25,14 +23,12 @@ def test_resize_image_processor_width_only():
     img_byte_arr = BytesIO(img_byte_arr.getvalue())
 
     # Test resizing with width only
-    processor = ResizeImageProcessor(size='100x')
-    processor.input_image = Image.open(img_byte_arr)
-    processor.format = 'PNG'
-    resized_image = processor.process()
+    operator = resize(width=100)
+    resized_image = operator(Image.open(img_byte_arr))
 
     assert resized_image.size == (100, 50)
 
-def test_resize_image_processor_height_only():
+def test_resize_operator_height_only():
     # Create an in-memory image
     original_image = Image.new("RGB", (200, 100), "blue")
     img_byte_arr = BytesIO()
@@ -40,9 +36,7 @@ def test_resize_image_processor_height_only():
     img_byte_arr = BytesIO(img_byte_arr.getvalue())
 
     # Test resizing with height only
-    processor = ResizeImageProcessor(size='x50')
-    processor.input_image = Image.open(img_byte_arr)
-    processor.format = 'PNG'
-    resized_image = processor.process()
+    operator = resize(height=50)
+    resized_image = operator(Image.open(img_byte_arr))
 
     assert resized_image.size == (100, 50)
