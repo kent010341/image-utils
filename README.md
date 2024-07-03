@@ -68,7 +68,7 @@ image-utils crop [OPTIONS]
    cat input.png | image-utils crop --align center > output.png
    ```
 
-## Combining Commands
+### Combining Commands
 
 You can use the commands together with pipes (`|`) to chain operations. For example:
 
@@ -81,7 +81,121 @@ You can use the commands together with pipes (`|`) to chain operations. For exam
    image-utils resize 200x200 -i input.jpg | image-utils crop --align top > output.png
    ```
 
+## Usage as a Python Package
+
+You can also use the `image-utils` as a library in your Python projects to leverage its image processing capabilities. Below is an example of how to use the package programmatically:
+
+#### Example Usage
+
+Here's an example demonstrating how to use the package to apply a sequence of image processing operations:  
+
+```python
+from PIL import Image
+from image_utils.operators import crop, resize
+from image_utils.pipeline import pipe
+
+# Load an image
+input_image = Image.open('input.png')
+
+# Create a pipeline and process the image
+pipeline = pipe(
+    crop(align='center'),
+    resize(width=100, height=100)
+)
+
+output_image = pipeline.process(input_image)
+
+# Save the processed image
+output_image.save('output.png')
+```
+
+### Creating Custom Pipelines
+
+ou can create custom pipelines by chaining multiple operators together. Each operator modifies the image and passes it to the next operator in the pipeline.
+
+```python
+from PIL import Image
+from image_utils.operators import crop, resize
+from image_utils.pipeline import pipe
+
+# Load an image
+input_image = Image.open('input.png')
+
+# Define a custom pipeline
+pipeline = pipe(
+    crop(align='center'),
+    resize(width=200)
+)
+
+# Process the image
+output_image = pipeline.process(input_image)
+
+# Save the processed image
+output_image.save('output.png')
+```
+
+### Using with Custom Operators
+
+You can also create your own custom operators by subclassing `ImageOperator` and adding them to the pipeline.
+
+```python
+from PIL import Image
+from image_utils.operators.image_operator import ImageOperator
+from image_utils.pipeline import pipe
+
+class CustomOperator(ImageOperator):
+    def __call__(self, image: Image.Image) -> Image.Image:
+        # Custom image processing logic here
+        return image
+
+# Load an image
+input_image = Image.open('input.png')
+
+# Create a pipeline with the custom operator
+pipeline = pipe(
+    CustomOperator()
+)
+
+# Process the image
+output_image = pipeline.process(input_image)
+
+# Save the processed image
+output_image.save('output.png')
+```
+
+### Adding More Operators to an Existing Pipeline
+
+You can extend an existing pipeline by adding more operators using the `add` method.
+
+```python
+from PIL import Image
+from image_utils.operators import crop, resize
+from image_utils.pipeline import pipe
+
+# Load an image
+input_image = Image.open('input.png')
+
+# Create a pipeline
+pipeline = pipe(
+    crop(align='center')
+)
+
+# Add more operators to the pipeline
+pipeline.add(
+    resize(width=100, height=100)
+)
+
+# Process the image
+output_image = pipeline.process(input_image)
+
+# Save the processed image
+output_image.save('output.png')
+```
+
 ## Conclusion
 
-The Image Utils Package provides flexible command-line tools for image processing. With support for piping and redirection, it can easily be integrated into larger workflows and automated scripts.  
+The Image Utils Package provides flexible command-line tools for image processing. With support for piping and redirection, it can easily be integrated into larger workflows and automated scripts. Additionally, the package can be used as a library within Python projects, offering a versatile and modular approach to image processing.
+
+By utilizing the Pipeline Design Pattern, the package allows you to chain multiple image processing operations in a clear and maintainable way. This design pattern ensures that each operation is a modular and reusable component, making it easy to create complex image processing workflows. You can also extend existing pipelines by adding more operators, providing great flexibility and scalability.
+
 For any questions or issues, feel free to open an issue on the [GitHub repository](https://github.com/kent010341/image-utils).
