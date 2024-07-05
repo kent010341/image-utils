@@ -1,5 +1,5 @@
 from .decorators import common_options, image_io_wrapper
-from .operators import crop as _crop, resize_with_pattern
+from .operators import crop as _crop, resize_with_pattern, gray_scale as _gray_scale
 import click
 
 @click.group()
@@ -24,6 +24,14 @@ def crop(input, align):
     """Crop an image"""
 
     return _crop(align)
+
+@cli.command()
+@common_options
+@image_io_wrapper
+def gray_scale(input):
+    """Change an image to gray scale"""
+
+    return _gray_scale()
 
 if __name__ == "__main__":
     cli()
