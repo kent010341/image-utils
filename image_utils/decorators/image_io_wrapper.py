@@ -21,14 +21,20 @@ def image_io_wrapper(command_func):
     """
     @wraps(command_func)
     def wrapper(*args, **kwargs):
-        # Get the input path from the keyword arguments
+        # Get the input path and opaque flag from the keyword arguments
         input_path = kwargs.get('input')
+        opaque = kwargs.get('opaque', False)
         # Fetch the input image based on the input path
         image = _fetch_image(input_path=input_path)
         # Execute the command function with the provided arguments
         pipeline = pipe(command_func(*args, **kwargs))
-        # Process the image and save the output to standard output
-        pipeline.process(image).save(sys.stdout.buffer, format=image.format)
+        # Process the image
+        output_image = pipeline.process(image)
+        # Convert the image to an opaque format if needed
+        if opaque and output_image.mode in ('RGBA', 'LA'):
+            output_image = output_image.convert('RGB')
+        # Save the output to standard output
+        output_image.save(sys.stdout.buffer, format=image.format)
     return wrapper
 
 def _fetch_image(input_path: str) -> Image.Image:
