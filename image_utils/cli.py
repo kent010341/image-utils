@@ -11,7 +11,7 @@ def cli():
 @click.argument('size')
 @common_options
 @image_io_wrapper
-def resize(size, input):
+def resize(size, input, opaque):
     """Resize an image"""
 
     return resize_with_pattern(size)
@@ -20,7 +20,7 @@ def resize(size, input):
 @click.option('--align', type=click.Choice(['top', 'bottom', 'left', 'right', 'center']), default='center', help='Align the cropped image in the square (default: center)')
 @common_options
 @image_io_wrapper
-def crop(input, align):
+def crop(input, align, opaque):
     """Crop an image"""
 
     return _crop(align)
@@ -28,7 +28,7 @@ def crop(input, align):
 @cli.command()
 @common_options
 @image_io_wrapper
-def gray_scale(input):
+def gray_scale(input, opaque):
     """Change an image to gray scale"""
 
     return _gray_scale()
