@@ -41,35 +41,6 @@ class ResizeOperator(ImageOperator):
         """
         return f"ResizeOperator(width='{self.width}, height='{self.height}')"
 
-def parse_size(size_str: str) -> Tuple[Optional[int], Optional[int]]:
-    """
-    Parses a size string in the format <width>x<height>, <width>x, or x<height>.
-    
-    Parameters:
-    size_str (str): The size string to parse.
-    
-    Returns:
-    Tuple[Optional[int], Optional[int]]: A tuple containing the width and height.
-    """
-    if 'x' not in size_str:
-        raise ValueError("Size must be in the format <width>x<height>, <width>x, or x<height>")
-    width_str, height_str = size_str.split('x')
-    width = int(width_str) if width_str else None
-    height = int(height_str) if height_str else None
-    return width, height
-
-def resize_with_pattern(size: str) -> ResizeOperator:
-    """
-    Creates a ResizeOperator from a size string.
-    
-    Parameters:
-    size (str): The size string to parse.
-    
-    Returns:
-    ResizeOperator: The ResizeOperator initialized with the parsed size.
-    """
-    return ResizeOperator(*parse_size(size))
-
 def resize(width: Optional[int] = None, height: Optional[int] = None) -> ResizeOperator:
     """
     Creates a ResizeOperator with the specified width and height.
