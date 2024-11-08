@@ -1,6 +1,6 @@
 from typing import Tuple
 from .decorators import common_options, image_io_wrapper
-from .operators import crop as _crop, resize as _resize, gray_scale as _gray_scale, expand as _expand
+from .operators import crop as _crop, resize as _resize, gray_scale as _gray_scale, expand as _expand, roll as _roll
 import click
 
 def parse_size(value: str) -> Tuple[int, int]:
@@ -92,6 +92,21 @@ def expand(input, size, fillwith, align, dx, dy, fillwithpos, opaque):
         dy=dy, 
         fillwithpos=fillwithpos
     )
+
+@cli.command()
+@click.argument('shift', type=int)
+@click.option(
+    '-d', '--direction', 
+    type=click.Choice(['l', 'r', 'u', 'b']), 
+    default='r', 
+    help="Direction of roll ('l' for left, 'r' for right, 'u' for up, 'b' for down). Default is 'r'."
+)
+@common_options
+@image_io_wrapper
+def roll(input, shift, direction, opaque):
+    """Roll (shift) the image horizontally or vertically"""
+
+    return _roll(shift=shift, direction=direction)
 
 if __name__ == "__main__":
     cli()
