@@ -1,6 +1,6 @@
-from typing import Tuple
+from typing import Tuple, Union
 from .decorators import common_options, image_io_wrapper
-from .operators import crop as _crop, resize as _resize, gray_scale as _gray_scale, expand as _expand, roll as _roll
+from .operators import crop as _crop, resize as _resize, gray_scale as _gray_scale, expand as _expand, roll as _roll, trim as _trim
 import click
 
 def parse_size(value: str) -> Tuple[int, int]:
@@ -14,6 +14,21 @@ def parse_size(value: str) -> Tuple[int, int]:
         return width, height
     except ValueError:
         raise click.BadParameter("Size must be in the format {w}x{h} (e.g., 100x200, 300x, x400).")
+
+
+def parse_boundary(value: str) -> Union[int, float]:
+    """
+    Parse the boundary value, which may be a pixel (int) or a proportion (str ending with 'x').
+
+    Raises:
+        ValueError: If a proportion exceeds 1.0.
+    """
+    if isinstance(value, str) and value.endswith('x'):
+        proportion = float(value[:-1])
+        if proportion > 1.0:
+            raise ValueError(f"Proportion '{value}' exceeds maximum allowable limit of 1.0 (100%).")
+        return proportion
+    return int(value)
 
 @click.group()
 def cli():
@@ -30,13 +45,26 @@ def resize(size, input, opaque):
     return _resize(*size)
 
 @cli.command()
-@click.option('--align', type=click.Choice(['top', 'bottom', 'left', 'right', 'center']), default='center', help='Align the cropped image in the square (default: center)')
+@click.option('-l', '--left', default="0", help='Left boundary for cropping. Use a number (pixels) or a proportion (e.g., 0.9x for 90%).')
+@click.option('-t', '--top', default="0", help='Top boundary for cropping. Use a number (pixels) or a proportion (e.g., 0.9x for 90%).')
+@click.option('-r', '--right', default="1.0x", help='Right boundary for cropping. Use a number (pixels) or a proportion (e.g., 1.0x for 100%).')
+@click.option('-b', '--bottom', default="1.0x", help='Bottom boundary for cropping. Use a number (pixels) or a proportion (e.g., 1.0x for 100%).')
 @common_options
 @image_io_wrapper
-def crop(input, align, opaque):
-    """Crop an image"""
+def crop(input, left, top, right, bottom, opaque):
+    """Crop an image to specified boundaries."""
+    
+    try:
+        left = parse_boundary(left)
+        top = parse_boundary(top)
+        right = parse_boundary(right)
+        bottom = parse_boundary(bottom)
+    except ValueError as e:
+        click.echo(f"Error: {e}", err=True)
+        return
 
-    return _crop(align)
+    return _crop(left=left, top=top, right=right, bottom=bottom)
+
 
 @cli.command()
 @common_options
@@ -110,3 +138,12 @@ def roll(input, shift, direction, opaque):
 
 if __name__ == "__main__":
     cli()
+
+@cli.command()
+@common_options
+@image_io_wrapper
+def trim(input, opaque):
+    """Trim transparent borders from an image"""
+    
+    return _trim()
+
