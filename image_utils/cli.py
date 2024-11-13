@@ -1,6 +1,6 @@
 from typing import Tuple, Union
 from .decorators import common_options, image_io_wrapper
-from .operators import crop as _crop, resize as _resize, gray_scale as _gray_scale, expand as _expand, roll as _roll, trim as _trim
+from . import operators
 import click
 
 def parse_size(value: str) -> Tuple[int, int]:
@@ -42,7 +42,7 @@ def cli():
 def resize(size, input, opaque):
     """Resize an image"""
 
-    return _resize(*size)
+    return operators.resize(*size)
 
 @cli.command()
 @click.option('-l', '--left', default="0", help='Left boundary for cropping. Use a number (pixels) or a proportion (e.g., 0.9x for 90%).')
@@ -63,7 +63,7 @@ def crop(input, left, top, right, bottom, opaque):
         click.echo(f"Error: {e}", err=True)
         return
 
-    return _crop(left=left, top=top, right=right, bottom=bottom)
+    return operators.crop(left=left, top=top, right=right, bottom=bottom)
 
 
 @cli.command()
@@ -72,7 +72,7 @@ def crop(input, left, top, right, bottom, opaque):
 def gray_scale(input, opaque):
     """Change an image to gray scale"""
 
-    return _gray_scale()
+    return operators.gray_scale()
 
 @cli.command()
 @click.argument('size', callback=lambda ctx, param, value: parse_size(value))
@@ -111,7 +111,7 @@ def expand(input, size, fillwith, align, dx, dy, fillwithpos, opaque):
     """Expand the canvas of an image"""
 
     w, h = size
-    return _expand(
+    return operators.expand(
         width=w,
         height=h,
         fillwith=fillwith, 
@@ -134,7 +134,7 @@ def expand(input, size, fillwith, align, dx, dy, fillwithpos, opaque):
 def roll(input, shift, direction, opaque):
     """Roll (shift) the image horizontally or vertically"""
 
-    return _roll(shift=shift, direction=direction)
+    return operators.roll(shift=shift, direction=direction)
 
 if __name__ == "__main__":
     cli()
@@ -145,5 +145,5 @@ if __name__ == "__main__":
 def trim(input, opaque):
     """Trim transparent borders from an image"""
     
-    return _trim()
+    return operators.trim()
 
