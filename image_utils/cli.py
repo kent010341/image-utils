@@ -162,5 +162,29 @@ def flip(input, direction, opaque):
 
     return operators.flip(direction=direction)
 
+@cli.command()
+@click.argument('angle', type=float)
+@click.option(
+    '--fillwith', 
+    default='#00000000', 
+    help='Fill color in HEX format (default: transparent).'
+)
+@click.option(
+    '--fillwithpos', 
+    type=(int, int), 
+    default=None, 
+    help='Sample the fill color from the given coordinates.'
+)
+@common_options
+@image_io_wrapper
+def rotate(input, angle, fillwith, fillwithpos, opaque):
+    """Rotate the image by a specified angle with expanded canvas"""
+
+    return operators.rotate(
+        angle=angle,
+        fillwith=fillwith, 
+        fillwithpos=fillwithpos
+    )
+
 if __name__ == "__main__":
     cli()
