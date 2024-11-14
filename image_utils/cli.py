@@ -153,5 +153,14 @@ def trim(input, opaque):
     
     return operators.trim()
 
+@cli.command()
+@click.argument('direction', type=click.Choice(['h', 'v']))
+@common_options
+@image_io_wrapper
+def flip(input, direction, opaque):
+    """Flip the image horizontally or vertically"""
+
+    return operators.flip(direction=direction)
+
 if __name__ == "__main__":
     cli()
