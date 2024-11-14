@@ -1,7 +1,15 @@
+from importlib.metadata import version, PackageNotFoundError
 from typing import Tuple, Union
 from .decorators import common_options, image_io_wrapper
 from . import operators
 import click
+
+# Fetch installed image-utils-package
+try:
+    package_version = version("image-utils-package")
+except PackageNotFoundError:
+    # default
+    package_version = "0.0.0"
 
 def parse_size(value: str) -> Tuple[int, int]:
     """Parse {w}x{h} format to (width, height)."""
@@ -31,6 +39,7 @@ def parse_boundary(value: str) -> Union[int, float]:
     return int(value)
 
 @click.group()
+@click.version_option(package_version, '-v', '--version', message='%(version)s')
 def cli():
     """A command-line tool for image processing."""
     pass
@@ -136,9 +145,6 @@ def roll(input, shift, direction, opaque):
 
     return operators.roll(shift=shift, direction=direction)
 
-if __name__ == "__main__":
-    cli()
-
 @cli.command()
 @common_options
 @image_io_wrapper
@@ -147,3 +153,5 @@ def trim(input, opaque):
     
     return operators.trim()
 
+if __name__ == "__main__":
+    cli()
