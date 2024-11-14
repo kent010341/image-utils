@@ -4,5 +4,6 @@ from .gray_scale_operator import gray_scale
 from .expand_operator import expand
 from .roll_operator import roll
 from .crop_operator import crop
+from .flip_operator import flip
 
-__all__ = ['trim', 'resize', 'gray_scale', 'expand', 'roll', 'crop']
+__all__ = ['trim', 'resize', 'gray_scale', 'expand', 'roll', 'crop', 'flip']
