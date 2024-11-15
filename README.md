@@ -27,18 +27,32 @@ pip install .
 
 ### Command-Line Example
 
-Resize an image to 100x100 pixels and save the result:
+1. Resize an image to 100x100 pixels and save the result:
 
-```
-image-utils resize 100x100 --input input.jpg > output.jpg
-```
+    ```bash
+    image-utils resize 100x100 --input input.png > output.png
+    ```
 
-Chain multiple commands: crop and then rotate an image:
+2. **Chain multiple commands: crop and then rotate an image:**
 
-```bash
-image-utils crop --left 10 --top 10 --right 200 --bottom 200 --input input.jpg | \
-image-utils rotate 45 --fillwith "#FFFFFF" > output.jpg
-```
+    ```bash
+    image-utils crop --left 10 --top 10 --right 200 --bottom 200 --input input.png | \
+    image-utils rotate 45 --fillwith "#FFFFFF" > output.png
+    ```
+
+3. **Prepare an image for Telegram stickers**:**
+
+    Telegram requires sticker images to be 512x512 pixels, and usually we want the sticker to have the minimal transparent padding. This example trims the image to its non-transparent area and resizes it to 512x512. A file picker will appear if `--input` is not provided.
+
+    ```bash
+    image-utils trim | image-utils resize 512x512 > sticker.png
+    ```
+
+   **Steps**:
+   - The `trim` command removes any transparent padding around the image.
+   - The `resize` command ensures the image meets Telegram's size requirement.
+
+   Run the command, and select the input file when prompted by the file picker.
 
 ### Python Example
 
@@ -50,7 +64,7 @@ from image_utils.operators import crop, resize, rotate
 from image_utils.pipeline import pipe
 
 # Load an image
-input_image = Image.open("input.jpg")
+input_image = Image.open("input.png")
 
 # Create a processing pipeline
 pipeline = pipe(
@@ -61,7 +75,7 @@ pipeline = pipe(
 
 # Process the image and save the result
 output_image = pipeline.process(input_image)
-output_image.save("output.jpg")
+output_image.save("output.png")
 ```
 ---
 
