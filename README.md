@@ -40,9 +40,9 @@ pip install .
     image-utils rotate 45 --fillwith "#FFFFFF" > output.png
     ```
 
-3. **Prepare an image for Telegram stickers**:**
+3. **Prepare an image for Telegram stickers:**
 
-    Telegram requires sticker images to be 512x512 pixels, and usually we want the sticker to have the minimal transparent padding. This example trims the image to its non-transparent area and resizes it to 512x512. A file picker will appear if `--input` is not provided.
+    Telegram requires sticker images to be 512x512 pixels, and typically users prefer stickers to have minimal transparent padding. This example trims the image to its non-transparent area and resizes it to 512x512. A file picker will appear if `--input` is not provided.
 
     ```bash
     image-utils trim | image-utils resize 512x512 > sticker.png
