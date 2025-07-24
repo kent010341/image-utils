@@ -6,5 +6,9 @@ from .roll_operator import roll
 from .crop_operator import crop
 from .flip_operator import flip
 from .rotate_operator import rotate
+from .concat_map_operator import concat_map
 
-__all__ = ['trim', 'resize', 'gray_scale', 'expand', 'roll', 'crop', 'flip', 'rotate']
+__all__ = [
+    'trim', 'resize', 'gray_scale', 'expand', 'roll', 'crop', 
+    'flip', 'rotate', 'concat_map'
+]
