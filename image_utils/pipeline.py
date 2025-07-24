@@ -1,58 +1,57 @@
 from PIL import Image
-from typing import List, Type
-from .operators.image_operator import ImageOperator
+from typing import List, Union
+from core.image_transformer import ImageTransformer
 
-class Pipeline:
+class Pipeline(ImageTransformer):
     """
-    A class to manage and apply a series of image processing operators.
+    A composable pipeline for sequential image transformations.
 
-    This class allows chaining multiple image processing operators and applying them
-    sequentially to an input image.
+    This class allows chaining multiple image transformers (either operators or other pipelines)
+    and applying them in order via a single callable interface.
 
     Attributes:
-        operators (List[Type[ImageOperator]]): A list of image processing operators.
+        transformers (List[ImageTransformer]): A list of image transformers.
 
     Methods:
-        process(image: Image.Image) -> Image.Image:
-            Apply the pipeline of operators to the input image and return the processed image.
-        add_operator(*operators: Type[ImageOperator]) -> 'Pipeline':
-            Add additional operators to the pipeline and return the updated pipeline.
+        add(*transformers: ImageTransformer) -> 'Pipeline':
+            Add additional transformers to the pipeline.
     """
-    def __init__(self, operators: List[Type[ImageOperator]] = None):
+
+    def __init__(self, transformers: List[ImageTransformer] = None):
         """
-        Initialize the Pipeline with an optional list of operators.
+        Initialize the Pipeline with an optional list of transformers.
 
         Args:
-            operators (List[Type[ImageOperator]], optional): A list of image processing operators. Default is None.
+            transformers (List[ImageTransformer], optional): A list of callable image transformers. Defaults to empty.
         """
-        self.operators = operators if operators is not None else []
+        self.transformers = transformers if transformers is not None else []
 
-    def process(self, image: Image.Image) -> Image.Image:
+    def __call__(self, image: Image.Image) -> Image.Image:
         """
-        Apply the pipeline of operators to the input image.
+        Apply the pipeline of transformations to the input image.
 
         Args:
-            image (Image.Image): The input image to be processed.
+            image (Image.Image): The input image to be transformed.
 
         Returns:
-            Image.Image: The processed image.
+            Image.Image: The transformed image.
         """
         result = image
-        for operator in self.operators:
-            result = operator(result)
+        for transformer in self.transformers:
+            result = transformer(result)
         return result
 
-    def add(self, *operators: Type[ImageOperator]) -> 'Pipeline':
+    def add(self, *transformers: ImageTransformer) -> 'Pipeline':
         """
-        Add additional operators to the pipeline.
+        Add additional transformers to the pipeline.
 
         Args:
-            *operators (Type[ImageOperator]): One or more image processing operators to add to the pipeline.
+            *transformers (ImageTransformer): One or more callable image transformers.
 
         Returns:
-            Pipeline: The updated pipeline with the added operators.
+            Pipeline: The updated pipeline.
         """
-        self.operators.extend(operators)
+        self.transformers.extend(transformers)
         return self
 
     def __repr__(self) -> str:
@@ -60,19 +59,19 @@ class Pipeline:
         Return a string representation of the pipeline.
 
         Returns:
-            str: A string representation of the pipeline.
+            str: A multiline string showing each transformer in the pipeline.
         """
-        operators_repr = ',\n  '.join(repr(op) for op in self.operators)
-        return f"Pipeline(\n  {operators_repr}\n)"
+        transformers_repr = ',\n  '.join(repr(t) for t in self.transformers)
+        return f"Pipeline(\n  {transformers_repr}\n)"
 
-def pipe(*operators: Type[ImageOperator]) -> Pipeline:
+def pipe(*transformers: ImageTransformer) -> Pipeline:
     """
-    Create a Pipeline with the specified operators.
+    Create a Pipeline instance from a list of image transformers.
 
     Args:
-        *operators (Type[ImageOperator]): One or more image processing operators.
+        *transformers (ImageTransformer): One or more callable image transformers.
 
     Returns:
-        Pipeline: A new Pipeline instance with the specified operators.
+        Pipeline: A new Pipeline instance.
     """
-    return Pipeline(list(operators))
+    return Pipeline(list(transformers))
