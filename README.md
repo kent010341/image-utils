@@ -74,7 +74,7 @@ pipeline = pipe(
 )
 
 # Process the image and save the result
-output_image = pipeline.process(input_image)
+output_image = pipeline(input_image)
 output_image.save("output.png")
 ```
 ---

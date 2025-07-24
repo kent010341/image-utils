@@ -63,7 +63,7 @@ pipeline = pipe(
 )
 
 # Process the image through the pipeline
-output_image = pipeline.process(input_image)
+output_image = pipeline(input_image)
 
 # Save the processed image
 output_image.save('output.png')
@@ -97,7 +97,7 @@ pipeline = pipe(
 )
 
 # Process the image
-output_image = pipeline.process(input_image)
+output_image = pipeline(input_image)
 
 # Save the processed image
 output_image.save('output.png')
@@ -126,7 +126,7 @@ pipeline.add(
 )
 
 # Process and save the image
-output_image = pipeline.process(input_image)
+output_image = pipeline(input_image)
 output_image.save('output.png')
 ```
 
