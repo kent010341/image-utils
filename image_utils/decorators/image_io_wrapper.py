@@ -29,7 +29,7 @@ def image_io_wrapper(command_func):
         # Execute the command function with the provided arguments
         pipeline = pipe(command_func(*args, **kwargs))
         # Process the image
-        output_image = pipeline.process(image)
+        output_image = pipeline(image)
         # Convert the image to an opaque format if needed
         if opaque and output_image.mode in ('RGBA', 'LA'):
             output_image = output_image.convert('RGB')

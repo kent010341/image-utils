@@ -1,6 +1,7 @@
 from PIL import Image
+from ..core.image_transformer import ImageTransformer
 
-class ImageOperator:
+class ImageOperator(ImageTransformer):
     """
     A base class for image processing operators.
 
