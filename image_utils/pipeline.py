@@ -1,6 +1,6 @@
 from PIL import Image
 from typing import List, Union
-from core.image_transformer import ImageTransformer
+from .core.image_transformer import ImageTransformer
 
 class Pipeline(ImageTransformer):
     """
